@@ -54,19 +54,30 @@ function getpath(){
 	requireDir
 	if [ "$1" == "" ]; then
 		DESK=1
-		echo "${SCRATCH}/`ls ${SCRATCH}|sort -rV |head -n ${DESK}|tail -n 1`"
-		return
+		item=`ls ${SCRATCH}|sort -rV |head -n ${DESK}|tail -n 1`
+		if [ "${item}" != "" ]; then
+			echo "${SCRATCH}/${item}"
+			return
+		else
+			die "デスクが存在しません。"
+		fi
 	else
 		if echo $1 | grep -e "^[0-9]*-[0-9]*-[0-9]*-[0-9]*$" 1>/dev/null; then
 			if [ -e "${SCRATCH}/$1" ]; then
 				echo "${SCRATCH}/$1"
 				return
 			else
-				die "そのようなデスクは存在しません。($1)"
+				die "そのようなデスクは存在しません。(絶対ID:$1)"
 			fi
 		elif echo $1 | grep -e "^[0-9]*$" 1>/dev/null; then
 			DESK=$(($1 + 1))
-			echo "${SCRATCH}/`ls ${SCRATCH}|sort -rV |head -n ${DESK}|tail -n 1`"
+			item=`ls ${SCRATCH}|sort -rV |head -n ${DESK}|tail -n 1`
+			if [ "${item}" != "" ]; then
+				echo "${SCRATCH}/${item}"
+				return
+			else
+				die "そのようなデスクは存在しません。(相対ID:$1)"
+			fi
 			return
 		else
 			die "引数が無効です。($1)"
