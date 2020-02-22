@@ -106,12 +106,18 @@ function link(){
 }
 
 function list(){
+	requireDir
 	no=0
 	for deskName in `ls ${SCRATCH}|sort -rV`
 	do
 		echo -e "${no}\t${deskName}"
 		no=$((${no} + 1))
 	done
+}
+
+function search(){
+	requireDir
+	find ${SCRATCH} 2>/dev/null|grep -e $1 2>/dev/null|sed "s/^$(echo "${SCRATCH}/"|sed 's/\//\\\//g')//"
 }
 
 case $1 in
@@ -129,6 +135,8 @@ case $1 in
 		fi;;
 	"list")
 		list;;
+	"search")
+		search $2;;
 	*)
 		echo "使用法: desk <コマンド> [<引数>]"
 		echo "コマンド一覧:"
