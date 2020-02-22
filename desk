@@ -128,7 +128,7 @@ case $1 in
 			link "" $2
 		fi;;
 	"list")
-		list|less;;
+		list;;
 	*)
 		echo "使用法: desk <コマンド> [<引数>]"
 		echo "コマンド一覧:"
