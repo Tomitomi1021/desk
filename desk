@@ -1,0 +1,110 @@
+#!/bin/bash
+
+function requireDir(){
+	if [ ! -e ${SCRATCH} ]; then
+		mkdir ${SCRATCH}
+		echo "ディレクトリを作成しました。"${SCRATCH} 1>&2
+	elif [ ! -d ${SCRATCH} ]; then
+		echo "ファイルが既に存在します。"${SCRATCH} 1>&2
+		read -p "削除しますか？[y/N]" input 1>&2
+		case ${input} in
+			[yY]*)
+				rm ${SCRATCH}
+				echo "削除しました。" 1>&2
+				mkdir ${SCRATCH}
+				echo "ディレクトリを作成しました。"${SCRATCH} 1>&2
+				;;
+			*)
+				echo "中断しました。" 1>&2
+				exit 0
+				;;
+		esac
+	fi
+}
+
+function generate(){
+	requireDir
+	DATE=`date +"%Y-%m-%d"`
+
+	NO=0
+
+	while [ -e ${SCRATCH}/${DATE}-${NO} ];
+	do
+		NO=$((${NO}+1))
+	done
+
+	RES="${SCRATCH}/${DATE}-${NO}"
+	mkdir ${RES}
+	echo ${RES}
+}
+
+function getpath(){
+	requireDir
+	if [ "$1" == "" ]; then
+		DESK=1
+	else
+		DESK=$(($1 + 1))
+	fi
+
+	DESKPATH=${SCRATCH}/`ls ${SCRATCH}|sort -rV |head -n ${DESK}|tail -n 1`
+	echo ${DESKPATH}
+}
+
+function enter(){
+	cd $1
+	${SHELL}
+}
+
+function godesk(){
+	enter $(getpath $1)
+}
+
+function lsdesk(){
+	ls --color=auto $(getpath $1)
+}
+
+function link(){
+	ln -s $(getpath $1) $2
+}
+
+function list(){
+	no=0
+	for deskName in `ls ${SCRATCH}|sort -rV`
+	do
+		echo -e "${no}\t${deskName}"
+		no=$((${no} + 1))
+	done
+}
+
+
+
+if [ ${SHELL} == "" ]; then
+	SHELL="/bin/bash"
+fi
+SCRATCH="`userinfo $(whoami) dir`/scratch"
+
+case $1 in
+	"make")
+		generate;;
+	"enter")
+		godesk $2;;
+	"view")
+		lsdesk $2;;
+	"link")
+		if [ $# -eq 3 ]; then
+			link $2 $3
+		elif [ $# -eq 2 ]; then
+			link "" $2
+		fi;;
+	"list")
+		list|less;;
+	*)
+		echo "使用法: desk <コマンド> [<引数>]"
+		echo "コマンド一覧:"
+		echo "make	新しいデスクを作成します。"
+		echo "enter	デスクに移動します。"
+		echo "view	デスクを閲覧します。"
+		echo "link	デスクへのリンクを貼ります。"
+		echo "list	デスクの一覧を表示します。"
+		;;
+esac
