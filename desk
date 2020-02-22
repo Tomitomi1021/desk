@@ -1,5 +1,10 @@
 #!/bin/bash
 
+SCRATCH="`userinfo $(whoami) dir`/scratch"
+if [ ${SHELL} == "" ]; then
+	SHELL="/bin/bash"
+fi
+
 function requireDir(){
 	if [ ! -e ${SCRATCH} ]; then
 		mkdir ${SCRATCH}
@@ -90,13 +95,6 @@ function list(){
 		no=$((${no} + 1))
 	done
 }
-
-
-
-if [ ${SHELL} == "" ]; then
-	SHELL="/bin/bash"
-fi
-SCRATCH="`userinfo $(whoami) dir`/scratch"
 
 case $1 in
 	"make")
