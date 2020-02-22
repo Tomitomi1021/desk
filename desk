@@ -5,6 +5,11 @@ if [ ${SHELL} == "" ]; then
 	SHELL="/bin/bash"
 fi
 
+function die(){
+	echo $1 1>&2
+	kill -s 2 $$
+}
+
 function requireDir(){
 	if [ ! -e ${SCRATCH} ]; then
 		mkdir ${SCRATCH}
@@ -20,9 +25,7 @@ function requireDir(){
 				echo "ディレクトリを作成しました。"${SCRATCH} 1>&2
 				;;
 			*)
-				echo "中断しました。" 1>&2
-				exit 0
-				;;
+				die "中断しました。";;
 		esac
 	fi
 }
@@ -48,23 +51,21 @@ function getpath(){
 	if [ "$1" == "" ]; then
 		DESK=1
 		echo "${SCRATCH}/`ls ${SCRATCH}|sort -rV |head -n ${DESK}|tail -n 1`"
-		exit 0
+		return
 	else
 		if echo $1 | grep -e "^[0-9]*-[0-9]*-[0-9]*-[0-9]*$" 1>/dev/null; then
 			if [ -e "${SCRATCH}/$1" ]; then
 				echo "${SCRATCH}/$1"
-				exit 0
+				return
 			else
-				echo "そのようなデスクは存在しません。($1)" 1>&2
-				exit 1
+				die "そのようなデスクは存在しません。($1)"
 			fi
 		elif echo $1 | grep -e "^[0-9]*$" 1>/dev/null; then
 			DESK=$(($1 + 1))
 			echo "${SCRATCH}/`ls ${SCRATCH}|sort -rV |head -n ${DESK}|tail -n 1`"
-			exit 0
+			return
 		else
-			echo "引数が無効です。($1)" 1>&2
-			exit 1
+			die "引数が無効です。($1)"
 		fi
 	fi
 
