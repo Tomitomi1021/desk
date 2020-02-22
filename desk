@@ -11,7 +11,7 @@ function log(){
 
 function die(){
 	log $1
-	kill -s 2 $$
+	kill -s 2 ${BASHPID}
 }
 
 function requireDir(){
