@@ -5,24 +5,28 @@ if [ ${SHELL} == "" ]; then
 	SHELL="/bin/bash"
 fi
 
-function die(){
+function log(){
 	echo $1 1>&2
+}
+
+function die(){
+	log $1
 	kill -s 2 $$
 }
 
 function requireDir(){
 	if [ ! -e ${SCRATCH} ]; then
 		mkdir ${SCRATCH}
-		echo "ディレクトリを作成しました。"${SCRATCH} 1>&2
+		log "ディレクトリを作成しました。"${SCRATCH}
 	elif [ ! -d ${SCRATCH} ]; then
-		echo "ファイルが既に存在します。"${SCRATCH} 1>&2
+		log "ファイルが既に存在します。"${SCRATCH}
 		read -p "削除しますか？[y/N]" input 1>&2
 		case ${input} in
 			[yY]*)
 				rm ${SCRATCH}
-				echo "削除しました。" 1>&2
+				log "削除しました。"
 				mkdir ${SCRATCH}
-				echo "ディレクトリを作成しました。"${SCRATCH} 1>&2
+				log "ディレクトリを作成しました。"${SCRATCH}
 				;;
 			*)
 				die "中断しました。";;
