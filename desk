@@ -17,22 +17,18 @@ function die(){
 }
 
 function requireDir(){
-	if [ ! -e ${SCRATCH} ]; then
-		mkdir ${SCRATCH}
-		log "ディレクトリを作成しました。"${SCRATCH}
-		mkdir ${DESKS}
-		log "ディレクトリを作成しました。"${DESKS}
-	elif [ ! -d ${SCRATCH} ]; then
-		log "ファイルが既に存在します。"${SCRATCH}
+	if [ ! -e $1 ]; then
+		mkdir $1
+		log "ディレクトリを作成しました。"$1
+	elif [ ! -d $1 ]; then
+		log "ファイルが既に存在します。"$1
 		read -p "削除しますか？[y/N]" input 1>&2
 		case ${input} in
 			[yY]*)
-				rm ${SCRATCH}
+				rm $1
 				log "削除しました。"
-				mkdir ${SCRATCH}
-				log "ディレクトリを作成しました。"${SCRATCH}
-				mkdir ${DESKS}
-				log "ディレクトリを作成しました。"${DESKS}
+				mkdir $1
+				log "ディレクトリを作成しました。"$1
 				;;
 			*)
 				die "中断しました。";;
@@ -40,8 +36,13 @@ function requireDir(){
 	fi
 }
 
+function requireDirs(){
+	requireDir ${SCRATCH}
+	requireDir ${DESKS}
+}
+
 function generate(){
-	requireDir
+	requireDirs
 	DATE=`date +"%Y-%m-%d"`
 
 	NO=0
@@ -80,7 +81,7 @@ function getpathByRelativeID(){
 }
 
 function getpath(){
-	requireDir
+	requireDirs
 	if [ "$1" == "" ]; then
 		getpathByRelativeID 0
 	else
@@ -112,7 +113,7 @@ function link(){
 }
 
 function list(){
-	requireDir
+	requireDirs
 	no=0
 	for deskName in `ls ${DESKS}|sort -rV`
 	do
@@ -122,7 +123,7 @@ function list(){
 }
 
 function search(){
-	requireDir
+	requireDirs
 	find ${DESKS} 2>/dev/null|grep -e $1 2>/dev/null|sed "s/^$(echo "${DESKS}/"|sed 's/\//\\\//g')//"
 }
 
