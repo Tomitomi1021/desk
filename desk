@@ -144,6 +144,8 @@ case $1 in
 		list;;
 	"search")
 		search $2;;
+	"path")
+		getpath $2;;
 	*)
 		echo "使用法: desk <コマンド> [<引数>]"
 		echo "コマンド一覧:"
@@ -152,5 +154,6 @@ case $1 in
 		echo "view	デスクを閲覧します。"
 		echo "link	デスクへのリンクを貼ります。"
 		echo "list	デスクの一覧を表示します。"
+		echo "path	デスクへのパスを返します。"
 		;;
 esac
