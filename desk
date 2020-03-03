@@ -162,6 +162,7 @@ case $1 in
 		if [ "$1" != "" -a -e "${MACROS}/$1" ]; then
 			requireDirs
 			source ${MACROS}/$1
+			macro_main "${@:2}"
 		else
 			echo "使用法: desk <コマンド> [<引数>]"
 			echo "コマンド一覧:"
