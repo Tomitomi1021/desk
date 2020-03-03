@@ -2,6 +2,7 @@
 
 SCRATCH="${HOME}/.scratch"
 DESKS="${SCRATCH}/desks"
+MACROS="${SCRATCH}/macros"
 
 if [ ${SHELL} == "" ]; then
 	SHELL="/bin/bash"
@@ -39,6 +40,7 @@ function requireDir(){
 function requireDirs(){
 	requireDir ${SCRATCH}
 	requireDir ${DESKS}
+	requireDir ${MACROS}
 }
 
 function generate(){
@@ -146,14 +148,37 @@ case $1 in
 		search $2;;
 	"path")
 		getpath $2;;
+	"macro")
+		requireDirs
+		case $2 in
+			"add")
+				cp $4 ${MACROS}/$3;;
+			"del")
+				rm ${MACROS}/$3;;
+			"list")
+				ls ${MACROS};;
+			*)
+				echo "使用法: desk macro [add <マクロ名> <スクリプト>] [del <マクロ名>] [list]"
+				echo "add	スクリプトをマクロとして登録します。"
+				echo "del	マクロを削除します。"
+				echo "list	マクロを一覧表示します。"
+				;;
+		esac;;
 	*)
-		echo "使用法: desk <コマンド> [<引数>]"
-		echo "コマンド一覧:"
-		echo "make	新しいデスクを作成します。"
-		echo "enter	デスクに移動します。"
-		echo "view	デスクを閲覧します。"
-		echo "link	デスクへのリンクを貼ります。"
-		echo "list	デスクの一覧を表示します。"
-		echo "path	デスクへのパスを返します。"
+		if [ "$1" != "" -a -e "${MACROS}/$1" ]; then
+			requireDirs
+			source ${MACROS}/$1
+			macro_main "${@:2}"
+		else
+			echo "使用法: desk <コマンド> [<引数>]"
+			echo "コマンド一覧:"
+			echo "make	新しいデスクを作成します。"
+			echo "enter	デスクに移動します。"
+			echo "view	デスクを閲覧します。"
+			echo "link	デスクへのリンクを貼ります。"
+			echo "list	デスクの一覧を表示します。"
+			echo "path	デスクへのパスを返します。"
+			echo "macro	マクロの管理をします。"
+		fi
 		;;
 esac
