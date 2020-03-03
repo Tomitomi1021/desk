@@ -1,6 +1,8 @@
 #!/bin/bash
 
 SCRATCH="${HOME}/.scratch"
+DESKS="${SCRATCH}/desks"
+
 if [ ${SHELL} == "" ]; then
 	SHELL="/bin/bash"
 fi
@@ -18,6 +20,8 @@ function requireDir(){
 	if [ ! -e ${SCRATCH} ]; then
 		mkdir ${SCRATCH}
 		log "ディレクトリを作成しました。"${SCRATCH}
+		mkdir ${DESKS}
+		log "ディレクトリを作成しました。"${DESKS}
 	elif [ ! -d ${SCRATCH} ]; then
 		log "ファイルが既に存在します。"${SCRATCH}
 		read -p "削除しますか？[y/N]" input 1>&2
@@ -27,6 +31,8 @@ function requireDir(){
 				log "削除しました。"
 				mkdir ${SCRATCH}
 				log "ディレクトリを作成しました。"${SCRATCH}
+				mkdir ${DESKS}
+				log "ディレクトリを作成しました。"${DESKS}
 				;;
 			*)
 				die "中断しました。";;
@@ -40,20 +46,20 @@ function generate(){
 
 	NO=0
 
-	while [ -e ${SCRATCH}/${DATE}-${NO} ];
+	while [ -e ${DESKS}/${DATE}-${NO} ];
 	do
 		NO=$((${NO}+1))
 	done
 
-	RES="${SCRATCH}/${DATE}-${NO}"
+	RES="${DESKS}/${DATE}-${NO}"
 	mkdir ${RES}
 	echo ${RES}
 }
 
 
 function getpathByAbsoluteID(){
-	if [ -e "${SCRATCH}/$1" ]; then
-		echo "${SCRATCH}/$1"
+	if [ -e "${DESKS}/$1" ]; then
+		echo "${DESKS}/$1"
 		return
 	else
 		die "そのようなデスクは存在しません。(絶対ID:$1)"
@@ -61,12 +67,12 @@ function getpathByAbsoluteID(){
 }
 
 function getpathByRelativeID(){
-	if [ $1 -ge `ls ${SCRATCH}|wc -l` ]; then
+	if [ $1 -ge `ls ${DESKS}|wc -l` ]; then
 		die "そのようなデスクは存在しません。(相対ID:$1)"
 	fi
-	item=`ls ${SCRATCH}|sort -rV |head -n $(($1 + 1))|tail -n 1`
+	item=`ls ${DESKS}|sort -rV |head -n $(($1 + 1))|tail -n 1`
 	if [ "${item}" != "" ]; then
-		echo "${SCRATCH}/${item}"
+		echo "${DESKS}/${item}"
 		return
 	else
 		die "そのようなデスクは存在しません。(相対ID:$1)"
@@ -108,7 +114,7 @@ function link(){
 function list(){
 	requireDir
 	no=0
-	for deskName in `ls ${SCRATCH}|sort -rV`
+	for deskName in `ls ${DESKS}|sort -rV`
 	do
 		echo -e "${no}\t${deskName}"
 		no=$((${no} + 1))
@@ -117,7 +123,7 @@ function list(){
 
 function search(){
 	requireDir
-	find ${SCRATCH} 2>/dev/null|grep -e $1 2>/dev/null|sed "s/^$(echo "${SCRATCH}/"|sed 's/\//\\\//g')//"
+	find ${DESKS} 2>/dev/null|grep -e $1 2>/dev/null|sed "s/^$(echo "${DESKS}/"|sed 's/\//\\\//g')//"
 }
 
 case $1 in
