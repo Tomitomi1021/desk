@@ -159,13 +159,18 @@ case $1 in
 				echo "Invalid values";;
 		esac;;
 	*)
-		echo "使用法: desk <コマンド> [<引数>]"
-		echo "コマンド一覧:"
-		echo "make	新しいデスクを作成します。"
-		echo "enter	デスクに移動します。"
-		echo "view	デスクを閲覧します。"
-		echo "link	デスクへのリンクを貼ります。"
-		echo "list	デスクの一覧を表示します。"
-		echo "macro	マクロの管理をします。"
+		if [ "$1" != "" -a -e "${MACROS}/$1" ]; then
+			requireDirs
+			source ${MACROS}/$1
+		else
+			echo "使用法: desk <コマンド> [<引数>]"
+			echo "コマンド一覧:"
+			echo "make	新しいデスクを作成します。"
+			echo "enter	デスクに移動します。"
+			echo "view	デスクを閲覧します。"
+			echo "link	デスクへのリンクを貼ります。"
+			echo "list	デスクの一覧を表示します。"
+			echo "macro	マクロの管理をします。"
+		fi
 		;;
 esac
