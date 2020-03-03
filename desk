@@ -156,7 +156,11 @@ case $1 in
 			"list")
 				ls ${MACROS};;
 			*)
-				echo "Invalid values";;
+				echo "使用法: desk macro [add <マクロ名> <スクリプト>] [del <マクロ名>] [list]"
+				echo "add	スクリプトをマクロとして登録します。"
+				echo "del	マクロを削除します。"
+				echo "list	マクロを一覧表示します。"
+				;;
 		esac;;
 	*)
 		if [ "$1" != "" -a -e "${MACROS}/$1" ]; then
