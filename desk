@@ -2,6 +2,7 @@
 
 SCRATCH="${HOME}/.scratch"
 DESKS="${SCRATCH}/desks"
+MACROS="${SCRATCH}/macros"
 
 if [ ${SHELL} == "" ]; then
 	SHELL="/bin/bash"
@@ -39,6 +40,7 @@ function requireDir(){
 function requireDirs(){
 	requireDir ${SCRATCH}
 	requireDir ${DESKS}
+	requireDir ${MACROS}
 }
 
 function generate(){
@@ -144,6 +146,18 @@ case $1 in
 		list;;
 	"search")
 		search $2;;
+	"macro")
+		requireDirs
+		case $2 in
+			"add")
+				cp $4 ${MACROS}/$3;;
+			"del")
+				rm ${MACROS}/$3;;
+			"list")
+				ls ${MACROS};;
+			*)
+				echo "Invalid values";;
+		esac;;
 	*)
 		echo "使用法: desk <コマンド> [<引数>]"
 		echo "コマンド一覧:"
@@ -152,5 +166,6 @@ case $1 in
 		echo "view	デスクを閲覧します。"
 		echo "link	デスクへのリンクを貼ります。"
 		echo "list	デスクの一覧を表示します。"
+		echo "macro	マクロの管理をします。"
 		;;
 esac
