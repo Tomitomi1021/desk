@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRATCH="`userinfo $(whoami) dir`/scratch"
+SCRATCH="${HOME}/scratch"
 if [ ${SHELL} == "" ]; then
 	SHELL="/bin/bash"
 fi
